@@ -13,6 +13,7 @@ TRAIN_PATH = "u4_train/"
 ######################
 
 libGeneral.createSQLiteDB(DATABASE_NAME)
+connection = sqlite3.connect(DATABASE_NAME)
 
 '''
 Gibt ein Dictionary Verzeichnis -> Dateiliste zurueck vom uebergebenen Pfad zurueck
@@ -30,8 +31,12 @@ trainingFiles = getTrainingFileNames(TRAIN_PATH)
 for className in trainingFiles:
 	fileList = trainingFiles[className]
 	for fileName in fileList:
-		libGeneral.readFileToDB(fileName, TRAIN_PATH + "/" + className + "/", DATABASE_NAME, className)
+		libGeneral.readFileToDB(fileName, TRAIN_PATH + "/" + className + "/", connection, className)
 		
-
+connection.commit()
+		
+##########################
+### Reading data done! ###
+##########################
 
 

@@ -56,7 +56,7 @@ def createSQLiteDB(db):
            WORD_VECTOR       TEXT,
            CLASS             TEXT    NOT NULL
            );''')
-	db_connection.close()
+    db_connection.close()
     
 '''
 Make a csv string from a localDictionary
@@ -135,9 +135,7 @@ def getHighestValues(localDictionary, n):
 '''
 Reads a given html file to the DB
 '''
-def readFileToDB(filename, path, DATABASE_NAME, docClass):
-    
-    connection = sqlite3.connect(DATABASE_NAME)
+def readFileToDB(filename, path, connection, docClass):
     
     cursor = connection.cursor()
     
@@ -184,14 +182,12 @@ def readFileToDB(filename, path, DATABASE_NAME, docClass):
         
     # Normalize localDictionary
     #localDictionary = libGeneral.normalizeDictionary(localDictionary)
-        
+    
     # Write data to database
-    filename = filename.replace("^","/")
     serializedDictionary = makeStringFromDictionary(localDictionary)
-    values = (filename, serializedDictionary, docClass)
+    values = (serializedDictionary, docClass)
     sql = "INSERT INTO TRAINING (WORD_VECTOR, CLASS) VALUES (?,?);"
     cursor.execute(sql, values)
-    connection.commit()
     
 '''
 Calculate the global dictionary from all files in DB
