@@ -148,7 +148,11 @@ def readFileToDB(filename, path, connection, docClass):
     inputString = inputFile.read()
     
     # Get the wordlist, remove stopwords and stem the words
-    wordList = extractor.extract(inputString)
+    inputString = removeSpecialCharacters(inputString)
+    inputString = removeAdditionalSpaces(inputString)
+    inputString = makeStringLowerCase(inputString)
+    
+    wordList = inputString.split()
     wordList = extractor.removeStopwords(wordList, "english")    
     wordList = extractor.stemList(wordList)
     
