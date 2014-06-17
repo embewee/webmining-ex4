@@ -10,48 +10,18 @@ import nltk
 import codecs
 
 
-def extract(htmlFile):
-    '''
-    Extracts the content from a html file.
-    Extractor will ignore links, images and emphasis. 
-    E-Mail Adresses will be removed.
-    Result will be free of special characters, multi spaces and single character words.
-    Result will lower case
-
-    INPUT:
-        htmlFile - A string containing a html file
-
-    OUTPUT:
-        wordList - A list of words that are contained in the htmlFile
-    '''
-        
-    # Create the extractor object
-    # and set the properties
-    htmlExtractor = html2text.HTML2Text()
-    htmlExtractor.ignore_links = True
-    htmlExtractor.ignore_images = True
-    htmlExtractor.ignore_emphasis = True
-    
-    htmlContent = htmlExtractor.handle(htmlFile)
-    
-    # Regex for finding e-mail adresses
-    regex = re.compile(("([a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`"
-                        "{|}~-]+)*(@|\sat\s)(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(\.|"
-                        "\sdot\s))+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)"))
-    emailList = re.findall(regex, htmlContent)
-    for email in emailList:
-        htmlContent = htmlContent.replace(email[0], "")
-    
+def extract(s):
+ 
     # Remove special characters
     # Remove additional spaces
     # Make string lower case
-    htmlContent = libGeneral.removeSpecialCharacters(htmlContent)
-    htmlContent = libGeneral.removeAdditionalSpaces(htmlContent)
-    htmlContent = libGeneral.makeStringLowerCase(htmlContent)
+    htmlContent = libGeneral.removeSpecialCharacters(s)
+    htmlContent = libGeneral.removeAdditionalSpaces(s)
+    htmlContent = libGeneral.makeStringLowerCase(s)
     
     wordList = htmlContent.split()
     # Remove single characters
-    wordList = removeSingleCharacters(wordList)
+    # wordList = removeSingleCharacters(wordList)
     
     return wordList
 
