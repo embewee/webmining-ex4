@@ -134,16 +134,7 @@ def getHighestValues(localDictionary, n):
         x += 1
     return outputDictionary
 
-'''
-Reads a given html file to the DB
-'''
-def readFileToDB(filename, path, connection, docClass):
-    
-    cursor = connection.cursor()
-    
-    filename = unicode(filename)
-    absFilename = path + filename
-    
+def createWordVector(absFilename):
     inputFile = codecs.open(absFilename, "r", "utf-8")
     inputString = inputFile.read()
     
@@ -155,6 +146,19 @@ def readFileToDB(filename, path, connection, docClass):
     wordList = inputString.split()
     wordList = extractor.removeStopwords(wordList, "english")    
     wordList = extractor.stemList(wordList)
+    return wordList
+
+'''
+Reads a given html file to the DB
+'''
+def readFileToDB(filename, path, connection, docClass):
+    
+    cursor = connection.cursor()
+    
+    filename = unicode(filename)
+    absFilename = path + filename
+    
+    wordlList = createWordVector(absFilename)
     
     # If the word list is empty
     # Dont write list to Database
@@ -283,6 +287,17 @@ def writeDictionaryToDisk(dictionary, fileName):
         outputFile.write(line)
     
     outputFile.close()
+
+'''
+Reads the given file into a dictionary
+
+INPUT:
+    fileName - the filename to read from
+'''
+def readDictionaryFromDisk(fileName):
+	inputFile = codecs.open(fileName, 'r', encoding="utf-8")
+	string = inputFile.read()
+	return makeDictionaryFromString(string)
 
 '''
 Creates a file with sparse representation for two classes in a database

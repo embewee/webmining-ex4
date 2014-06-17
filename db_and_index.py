@@ -15,21 +15,18 @@ TRAIN_PATH = "u4_train/"
 libGeneral.createSQLiteDB(DATABASE_NAME)
 connection = sqlite3.connect(DATABASE_NAME)
 
-
 '''
 Gibt ein Dictionary Verzeichnis -> Dateiliste zurueck vom uebergebenen Pfad zurueck
 '''
-
-
-def getTrainingFileNames(path):
+def getFileDict(path):
 	trainingFiles = {}
 	dirList = os.listdir(path)
 	for d in dirList:
 		fileList = os.listdir(path + d)
 		trainingFiles[d] = fileList
 	return trainingFiles
-	 
-trainingFiles = getTrainingFileNames(TRAIN_PATH)
+
+trainingFiles = getFileDict(TRAIN_PATH)
 
 for className in trainingFiles:
 	fileList = trainingFiles[className]
