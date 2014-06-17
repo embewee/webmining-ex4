@@ -28,7 +28,7 @@ The returned string only has single spaces
 '''
 def removeAdditionalSpaces(s):
     return re.sub('[ +]+', ' ', s)
-f
+    
 '''
 Makes a given string all lower case with special german characters
 '''
@@ -50,26 +50,13 @@ def createSQLiteDB(db):
         os.remove(db)
     
     db_connection = sqlite3.connect(db)
-    db_connection.execute('''CREATE TABLE WEBPAGES
+    db_connection.execute('''CREATE TABLE TRAINING
            (
-           URL               TEXT    NOT NULL,
-           WORD_VECTOR       TEXT,
-           TF_IDF            TEXT,
-           CLASS             TEXT    NOT NULL,
            ID                INTEGER PRIMARY KEY AUTOINCREMENT,
-           ORIGINAL_WORD_VECTOR TEXT NOT NULL
+           WORD_VECTOR       TEXT,
+           CLASS             TEXT    NOT NULL
            );''')
-    
-
-#    db_connection.execute('''CREATE TABLE LINKS
-#          (
-#          URL                 TEXT        NOT NULL,
-#          HASH_URL            TEXT        NOT NULL,
-#          URL_COUNTER         INTEGER     NOT NULL,
-#          PRIMARY KEY (URL)
-#          );''')         
-    
-    db_connection.close()
+	db_connection.close()
     
 '''
 Make a csv string from a localDictionary
@@ -202,7 +189,7 @@ def readFileToDB(filename, path, DATABASE_NAME, docClass):
     filename = filename.replace("^","/")
     serializedDictionary = makeStringFromDictionary(localDictionary)
     values = (filename, serializedDictionary, docClass)
-    sql = "INSERT INTO WEBPAGES (URL, ORIGINAL_WORD_VECTOR, CLASS) VALUES (?,?,?);"
+    sql = "INSERT INTO TRAINING (WORD_VECTOR, CLASS) VALUES (?,?);"
     cursor.execute(sql, values)
     connection.commit()
     
@@ -212,7 +199,7 @@ Calculate the global dictionary from all files in DB
 def calculateIDFVector(DATABASE_NAME, docClass):
     connection = sqlite3.connect(DATABASE_NAME)
     values = [docClass,]
-    sql = "SELECT * FROM WEBPAGES WHERE CLASS = ?;"
+    sql = "SELECT * FROM TRAINING WHERE CLASS = ?;"
     selectCursor = connection.execute(sql, values)
     idfVector = {}
     rows = selectCursor.fetchall()
@@ -261,7 +248,7 @@ def createGlobalIndexDictionary(connection):
     indexDict = {}
     index = 1
     
-    sql = "SELECT * FROM WEBPAGES WHERE 1;"
+    sql = "SELECT * FROM TRAINING WHERE 1;"
     selectCursor = connection.execute(sql)
     rows = selectCursor.fetchall()
     
@@ -303,7 +290,7 @@ def createSparseRepresentationFile(connection, globalDictionary, filename):
     
     outputFile = codecs.open(filename, 'w', encoding="utf-8")
     
-    sql = "SELECT * FROM WEBPAGES WHERE 1;"
+    sql = "SELECT * FROM TRAINING WHERE 1;"
     selectCursor = connection.execute(sql)
     rows = selectCursor.fetchall()
     
@@ -350,7 +337,7 @@ Updates the database by filtering the n most common words
 def updateMostCommonWords(DATABASE_NAME, docClass, n, testing=0):
     connection = sqlite3.connect(DATABASE_NAME)
     values = [docClass,]
-    sql = "SELECT * FROM WEBPAGES WHERE CLASS = ?;"
+    sql = "SELECT * FROM TRAINING WHERE CLASS = ?;"
     selectCursor = connection.execute(sql, values)
     rows = selectCursor.fetchall()
     
@@ -388,7 +375,7 @@ def updateMostCommonWords(DATABASE_NAME, docClass, n, testing=0):
         
         newWordVectorString = makeStringFromDictionary(newWordVector)
         values = (newWordVectorString, idD)
-        sql = "UPDATE WEBPAGES SET WORD_VECTOR = ? WHERE ID = ?"
+        sql = "UPDATE TRAINING SET WORD_VECTOR = ? WHERE ID = ?"
         connection.execute(sql, values)
         #connection.commit()
         

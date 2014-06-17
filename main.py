@@ -12,6 +12,8 @@ DATABASE_NAME = "ex4.db"
 TRAIN_PATH = "u4_train/"
 ######################
 
+libGeneral.createSQLiteDB(DATABASE_NAME)
+
 '''
 Gibt ein Dictionary Verzeichnis -> Dateiliste zurueck vom uebergebenen Pfad zurueck
 '''
