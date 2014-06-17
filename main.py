@@ -9,8 +9,27 @@ import sqlite3
 
 ######################
 DATABASE_NAME = "ex4.db"
+TRAIN_PATH = "u4_train/"
 ######################
 
-walked = os.walk(directory)
+'''
+Gibt ein Dictionary Verzeichnis -> Dateiliste zurueck vom uebergebenen Pfad zurueck
+'''
+def getTrainingFileNames(path):
+	trainingFiles = {}
+	dirList = os.listdir(path)
+	for d in dirList:
+		fileList = os.listdir(path + d)
+		trainingFiles[d] = fileList
+	return trainingFiles
+	 
+trainingFiles = getTrainingFileNames(TRAIN_PATH)
 
-print walked
+for className in trainingFiles:
+	fileList = trainingFiles[className]
+	for fileName in fileList:
+		libGeneral.readFileToDB(fileName, TRAIN_PATH + "/" + className + "/", DATABASE_NAME, className)
+		
+
+
+
