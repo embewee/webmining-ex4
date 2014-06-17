@@ -15,6 +15,7 @@ def classify(wordList):
 	
 	
 	
+	
 	for c in classes:
 		for word in docString:
 			classifyForClass(c, word)
@@ -28,13 +29,11 @@ testFiles = os.listdir(TEST_PATH)
 
 classes = []
 
-
 #for testFile in testFiles:
 #	wordVector = libGeneral.createWordVector(TEST_PATH + testFile)
 #	print wordVector
 
 globalIndex = libGeneral.readDictionaryFromDisk(GLOBAL_INDEX)
-
 
 cursor = connection.cursor()
 sql = "SELECT DISTINCT CLASS FROM TRAINING;"
