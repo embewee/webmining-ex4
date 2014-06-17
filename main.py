@@ -12,11 +12,17 @@ DATABASE_NAME = "ex4.db"
 TRAIN_PATH = "u4_train/"
 ######################
 
-libGeneral.createSQLiteDB(DATABASE_NAME)
 connection = sqlite3.connect(DATABASE_NAME)
 
 '''
+libGeneral.createSQLiteDB(DATABASE_NAME)
+connection = sqlite3.connect(DATABASE_NAME)
+'''
+
+'''
 Gibt ein Dictionary Verzeichnis -> Dateiliste zurueck vom uebergebenen Pfad zurueck
+'''
+
 '''
 def getTrainingFileNames(path):
 	trainingFiles = {}
@@ -38,5 +44,10 @@ connection.commit()
 ##########################
 ### Reading data done! ###
 ##########################
+'''
+
+globalIndex = libGeneral.createGlobalIndexDictionary(connection)
+libGeneral.writeDictionaryToDisk(globalIndex, "globalIndex")
+print globalIndex
 
 

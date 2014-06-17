@@ -84,6 +84,8 @@ def makeDictionaryFromString(dicString):
         key = splitLine[0]
         value = splitLine[1]
         
+        if value == "":
+            continue
         outputDict[key] = float(value)
         
     return outputDict
@@ -248,7 +250,6 @@ def createGlobalIndexDictionary(connection):
     selectCursor = connection.execute(sql)
     rows = selectCursor.fetchall()
     
-    # url | word_vector | tf_idf | class | id
     for row in rows:
         serializedDictionary = row[1]
         loadedDictionary = {}
