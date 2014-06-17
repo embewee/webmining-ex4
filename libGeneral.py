@@ -28,7 +28,7 @@ The returned string only has single spaces
 '''
 def removeAdditionalSpaces(s):
     return re.sub('[ +]+', ' ', s)
-
+f
 '''
 Makes a given string all lower case with special german characters
 '''
