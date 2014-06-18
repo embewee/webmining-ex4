@@ -13,12 +13,14 @@ RELPROB_PATH = "bayes_model/";
 # FUNKTIONEN 
 
 def classifyWordVectorForClass(className, testWordVector):
-	trainedVector = readDictionaryFromDisk(RELPROB_PATH + className)
+	#print testWordVector
+	
+	trainedVector = libGeneral.readDictionaryFromDisk(RELPROB_PATH + className)
 	score = 1.0
 	for key in testWordVector:
 		if key in trainedVector.keys():
 			# p(d|c)
-			score *= math.pow(trainedVector[key], testWordVector[key])
+			score *= math.pow(float(trainedVector[key]), float(testWordVector[key]))
 	return score
 
 '''
