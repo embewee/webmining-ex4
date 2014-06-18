@@ -11,15 +11,6 @@ import sqlite3
 DATABASE_NAME = "ex4.db"
 TRAIN_PATH = "u4_train/"
 
-#######################
-# Connect to Database #
-try:
-	connection = sqlite3.connect(DATABASE_NAME)
-except:
-	libGeneral.createSQLiteDB(DATABASE_NAME)
-	connection = sqlite3.connect(DATABASE_NAME)
-#######################
-
 '''
 Gibt ein Dictionary Verzeichnis -> Dateiliste zurueck vom uebergebenen Pfad zurueck
 '''
@@ -58,7 +49,7 @@ def calculateRelativeProbability(connection):
 	for row in cursor.fetchall():
 		classname = row[0]
 		cursor2 = connection.cursor()
-		sql = "SELECT WORD_VECTOR FROM TRAINING WHERE CLASS = ?:"
+		sql = "SELECT WORD_VECTOR FROM TRAINING WHERE CLASS = ?;"
 		values = [classname,]
 		cursor2.execute(sql, values)
 		
@@ -72,6 +63,18 @@ def calculateRelativeProbability(connection):
 				if key not in classDictionary.keys():
 					classDictionary[key] = currentWordVector[key]
 				else:
-					classDictionary[key] += currentWordVector[key]
-				
+					classDictionary[key] += currentWordVector[key]		
 		
+		classDictionary = libGeneral.normalizeDictionary(classDictionary)
+			
+		libGeneral.writeDictionaryToDisk(classDictionary, "bayes_model/" + classname)
+		
+##########################
+# Connect to Database #
+libGeneral.createSQLiteDB(DATABASE_NAME)
+connection = sqlite3.connect(DATABASE_NAME)
+#######################
+
+readAllFilesToDB(connection)
+createGlobalIndex(connection)
+calculateRelativeProbability(connection)
