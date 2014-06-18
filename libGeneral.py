@@ -144,6 +144,7 @@ def createWordVector(absFilename):
     inputString = makeStringLowerCase(inputString)
     
     wordList = inputString.split()
+    wordList = removeSingleCharacters(wordList)
     wordList = extractor.removeStopwords(wordList, "english")    
     wordList = extractor.stemList(wordList)
     return wordList
@@ -158,7 +159,7 @@ def readFileToDB(filename, path, connection, docClass):
     filename = unicode(filename)
     absFilename = path + filename
     
-    wordlList = createWordVector(absFilename)
+    wordList = createWordVector(absFilename)
     
     # If the word list is empty
     # Dont write list to Database
@@ -396,3 +397,13 @@ def updateMostCommonWords(DATABASE_NAME, docClass, n, testing=0):
         #connection.commit()
         
     connection.commit()       
+
+'''
+Removes single characters from a given list
+'''
+def removeSingleCharacters(wordList):
+    for word in wordList:
+        if len(word) == 1:
+            wordList.remove(word)
+    
+    return wordList
