@@ -244,7 +244,18 @@ def getMaxValueFromDictionary(dictionary):
         maxValue = max(keys)
         return maxValue
     except:
-        return 1.0
+        return 0.0
+    
+def getKeyFromMaxValueFromDictionary(dictionary):
+
+    try:
+        b = dict(map(lambda item: (item[1],item[0]),dictionary.items()))
+        keys = b.keys()
+        maxValue = max(keys)
+        key = b[maxValue]
+        return key
+    except:
+        return ""
 
 '''
 Creates a global index dictionary from a given database connection
