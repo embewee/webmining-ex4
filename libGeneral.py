@@ -147,7 +147,10 @@ def createWordVector(absFilename):
     wordList = removeSingleCharacters(wordList)
     wordList = extractor.removeStopwords(wordList, "english")    
     wordList = extractor.stemList(wordList)
-    return wordList
+    
+    wordVector = makeDictionaryFromList(wordList)
+    
+    return wordVector
 
 '''
 Reads a given html file to the DB
@@ -407,3 +410,14 @@ def removeSingleCharacters(wordList):
             wordList.remove(word)
     
     return wordList
+
+def makeDictionaryFromList(wordList):
+    
+    dictionary = {}
+    for word in wordList:
+        if word not in dictionary.keys():
+            dictionary[word] = 1.0
+        else:
+            dictionary[word] += 1.0
+            
+    return dictionary
