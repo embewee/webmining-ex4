@@ -13,8 +13,6 @@ RELPROB_PATH = "bayes_model/";
 # FUNKTIONEN 
 
 def classifyWordVectorForClass(className, testWordVector):
-	#print testWordVector
-	
 	trainedVector = libGeneral.readDictionaryFromDisk(RELPROB_PATH + className)
 	#score = 1.0
 	logScore = 0.0
@@ -22,8 +20,12 @@ def classifyWordVectorForClass(className, testWordVector):
 		if key in trainedVector.keys():
 			# p(d|c)
 			#score *= math.pow(float(trainedVector[key]), float(testWordVector[key]))
-			logScore -= math.log(math.pow(float(trainedVector[key]), float(testWordVector[key])))
-			print logScore
+			aPriori = aPrioriDict[className]
+			try:
+				logScore -= math.log(float(aPriori) * math.pow(float(trainedVector[key]), float(testWordVector[key])))
+			except:
+				pass
+			#print logScore
 	return logScore
 
 '''
@@ -64,15 +66,30 @@ for row in cursor.fetchall():
 	classProbVectors[className] = classProbVector
 
 
+
+cursor = connection.cursor()
+sql = "SELECT CLASS, COUNT(CLASS) FROM TRAINING GROUP BY CLASS;"
+cursor.execute(sql)
+aPrioriDict = {}
+for row in cursor.fetchall():
+	className = row[0]
+	freq = row[1]
+	aPrioriDict[className] = freq
+aPrioriDict = libGeneral.normalizeDictionary(aPrioriDict)
+print aPrioriDict
+'''
 wordVector = libGeneral.createWordVector("testdoc.txt")
 probs = classify(wordVector)
 print probs
+estimatedClass = libGeneral.getKeyFromMaxValueFromDictionary(probs);
+print estimatedClass
 
 '''
 for testFile in testFiles:
 	wordVector = libGeneral.createWordVector(TEST_PATH + testFile)
 	probs = classify(wordVector)
 	print testFile
-	print probs
+	#print probs
+	estimatedClass = libGeneral.getKeyFromMaxValueFromDictionary(probs);
+	print estimatedClass
 	print "##########"
-'''
