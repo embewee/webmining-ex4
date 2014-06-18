@@ -1,6 +1,7 @@
 import libGeneral
 import os
 import sqlite3
+import math
 
 ######################
 DATABASE_NAME = "ex4.db"
@@ -11,10 +12,14 @@ RELPROB_PATH = "bayes_model/";
 
 # FUNKTIONEN 
 
-def classifyWordVectorForClass(c, wordVector):
-	trainedVector = 
-	for word in wordVector:
-		print word
+def classifyWordVectorForClass(className, testWordVector):
+	trainedVector = readDictionaryFromDisk(RELPROB_PATH + className)
+	score = 1.0
+	for key in testWordVector:
+		if key in trainedVector.keys():
+			# p(d|c)
+			score *= math.pow(trainedVector[key], testWordVector[key])
+	return score
 
 '''
 Input:  WordVector wort->Hauefigkeite
@@ -22,9 +27,9 @@ Output: Vector mit Wahrscheinlichkeiten der Zugehoerigkeiten zu einer Klasse
 '''
 def classify(wordVector):
 	probs = {}
-	for c in classes:
-		prob = classifyWordVectorForClass(c, wordVector)
-		probs[c] = prob
+	for className in classes:
+		prob = classifyWordVectorForClass(className, wordVector)
+		probs[className] = prob
 	return probs
 
 
@@ -54,6 +59,15 @@ for row in cursor.fetchall():
 	classProbVectors[className] = classProbVector
 
 
+wordVector = libGeneral.createWordVector("testdoc.txt")
+probs = classify(wordVector)
+print probs
+
+'''
 for testFile in testFiles:
 	wordVector = libGeneral.createWordVector(TEST_PATH + testFile)
-	classify(wordVector)
+	probs = classify(wordVector)
+	print testFile
+	print probs
+	print "##########"
+'''
