@@ -30,7 +30,8 @@ for realClass in dirList:
 		fileName = row[0]
 		print "   " + fileName
 		wordVector = libGeneral.makeDictionaryFromString(row[1])
-		probs = kNN_classifier.classify(wordVector,7)
+		probs = kNN_classifier.classify(wordVector,15)
+		#probs = bayes_classifier.classify(wordVector)
 		estimatedClass =  probs[0]
 		print "   " + estimatedClass
 	

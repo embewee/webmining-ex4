@@ -74,7 +74,7 @@ def calculateModel(TFIDF):
         
         classname = row[0]
         cursor2 = connection.cursor()
-        sql = "SELECT WORD_VECTOR FROM TRAINING WHERE CLASS = ?;"
+        sql = "SELECT WORD_VECTOR FROM TRAINING WHERE CLASS = ? AND FOR_TESTING = 0;"
         values = [classname,]
         cursor2.execute(sql, values)
         

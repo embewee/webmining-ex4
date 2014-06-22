@@ -167,7 +167,8 @@ def createWordVector(absFilename):
     
     wordList = inputString.split()
     wordList = removeSingleCharacters(wordList)
-    wordList = extractor.removeStopwords(wordList, "english")    
+    wordList = extractor.removeStopwords(wordList, "english")
+    wordList = extractor.removeStopwords(wordList, "all_names")
     wordList = extractor.stemList(wordList)
     
     wordVector = makeDictionaryFromList(wordList)
