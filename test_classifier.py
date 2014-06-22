@@ -52,7 +52,7 @@ for i in range (0, nrOfClasses):
 		fileName = row[0]
 		print "   " + fileName
 		wordVector = libGeneral.makeDictionaryFromString(row[1])
-		probs = kNN_classifier.classify(wordVector,15)
+		probs = kNN_classifier.classify(wordVector,5)
 		#probs = bayes_classifier.classify(wordVector)
 		estimatedClass =  probs[0]
 		print "   " + estimatedClass
@@ -63,7 +63,7 @@ for i in range (0, nrOfClasses):
 	print "#################"
 
 # Write results to file
-outputFile = codecs.open("CLASSIFIER_TEST_MATRIX.txt", 'w', encoding="utf-8")
+outputFile = codecs.open("MATRIX-knn5.txt", 'w', encoding="utf-8")
 outputFile.write("v estimated class, > real class")
 
 for i in range (0, nrOfClasses) :

@@ -18,40 +18,62 @@ def diagSum(matrix):
 		diagSum += matrix[i][i]
 	return diagSum
 
-matrix = readmatrix.readMatrix("KONFUSIONSMATRIX.DATA")
-nrOfCols = len(matrix)
-matrixSum = 0;
-for i in range(0, nrOfCols):
-	matrixSum += rowSum(matrix, i)
+def quality(matrix):
+	nrOfCols = len(matrix)
+	matrixSum = 0;
+	for i in range(0, nrOfCols):
+		matrixSum += rowSum(matrix, i)
 
-print "matrix sum=" + str(matrixSum)
+	print "matrix sum=" + str(matrixSum)
 
-#[TP][FP]
-#[FN][TN]
-TP = 0;
-FP = 0;
-FN = 0;
-TN = 0;
+	#[TP][FP]
+	#[FN][TN]
+	sumTP = 0;
+	sumFP = 0;
+	sumFN = 0;
+	sumTN = 0;
 
-for i in range(0, nrOfCols):
-	TP += matrix[i][i]
-	FP += rowSum(matrix, i) - matrix[i][i]
-	FN += colSum(matrix, i) - matrix[i][i]
-	TN += matrixSum - TP - FP - FN
+	for i in range(0, nrOfCols):
+		#print "Class " + str(i)
+		TP = matrix[i][i]
+		FP = rowSum(matrix, i) - matrix[i][i]
+		FN = colSum(matrix, i) - matrix[i][i]
+		TN = matrixSum - TP - FP - FN
+		#print "TP=" + str(TP) + ", FP=" + str(FP) + ", FN=" + str(FN) + ", TN=" + str(TN)
+		sumTP += TP
+		sumFP += FP
+		sumFN += FN
+		sumTN += TN
 
-print "TP=" + str(TP)
-print "FP=" + str(FP)
-print "FN=" + str(FN)
-print "TN=" + str(TN)
+	print "avg TP=" + str(sumTP)
+	print "avg FP=" + str(sumFP)
+	print "avg FN=" + str(sumFN)
+	print "avg TN=" + str(sumTN)
 
-print "diagSum=" + str(diagSum(matrix))
+	print "diagSum=" + str(diagSum(matrix))
 
-accuracy = float(diagSum(matrix)) / float(matrixSum)
-microAvgPrecision = float(TP) / (float(TP) + float(FP))
-microAvgRecall = float(TP) / (float(TP) + float(FN))
-microAvgF1 = (2 * microAvgRecall * microAvgPrecision) / (microAvgRecall + microAvgPrecision)
+	accuracy = float(diagSum(matrix)) / float(matrixSum)
+	microAvgPrecision = float(sumTP) / float(float(sumTP) + float(sumFP))
+	microAvgRecall = float(sumTP) / float(float(sumTP) + float(sumFN))
+	microAvgF1 = float(2 * microAvgRecall * microAvgPrecision) / float(microAvgRecall + microAvgPrecision)
 
-print "accuracy=" + str(accuracy)
-print "microAvgPrecision=" + str(microAvgPrecision)
-print "microAvgRecall=" + str(microAvgRecall)
-print "microAvgF1=" + str(microAvgF1)
+	print "accuracy=" + str(accuracy)
+	print "microAvgPrecision=" + str(microAvgPrecision)
+	print "microAvgRecall=" + str(microAvgRecall)
+	print "microAvgF1=" + str(microAvgF1)
+
+############################
+# SKRIPT ###################
+############################
+matrix = readmatrix.readMatrix("KONFUSIONSMATRIX-knn15.DATA")
+quality(matrix)
+
+print "##############################################"
+
+matrix = readmatrix.readMatrix("KONFUSIONSMATRIX-knn10.DATA")
+quality(matrix)
+
+print "##############################################"
+
+matrix = readmatrix.readMatrix("KONFUSIONSMATRIX-knn5.DATA")
+quality(matrix)
