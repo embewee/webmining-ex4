@@ -6,9 +6,6 @@ import libGeneral
 Implementation of the nearest Neighbor classifier
 '''
 DATABASE_NAME = "ex4.db"
-TEST_PATH = "u4_test/"
-GLOBAL_INDEX = "globalIndex";
-RELPROB_PATH = "bayes_model/";
 connection = sqlite3.connect(DATABASE_NAME)
 
 def classify(classifyVector,n):

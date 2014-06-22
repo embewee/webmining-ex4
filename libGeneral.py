@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import re
 import os
+import sys
 import sqlite3
 import operator
 import extractor
@@ -54,7 +55,8 @@ def createSQLiteDB(db):
            (
            ID                INTEGER PRIMARY KEY AUTOINCREMENT,
            WORD_VECTOR       TEXT,
-           CLASS             TEXT    NOT NULL
+           CLASS             TEXT    NOT NULL,
+           FILENAME          TEXT
            );''')
     db_connection.close()
     
@@ -81,8 +83,12 @@ def makeDictionaryFromString(dicString):
         if line == "": 
             continue
         splitLine = line.split(";")
-        key = splitLine[0]
-        value = splitLine[1]
+        try:
+            key = splitLine[0]
+            value = splitLine[1]
+        except:
+            print "ERROR IN LINE: " + line
+            sys.exit()
         
         if value == "":
             continue
@@ -187,8 +193,8 @@ def readFileToDB(filename, path, connection, docClass):
 
     # Write data to database
     serializedDictionary = makeStringFromDictionary(wordVector)
-    values = (serializedDictionary, docClass)
-    sql = "INSERT INTO TRAINING (WORD_VECTOR, CLASS) VALUES (?,?);"
+    values = (serializedDictionary, docClass, filename)
+    sql = "INSERT INTO TRAINING (WORD_VECTOR, CLASS, FILENAME) VALUES (?,?,?);"
     cursor.execute(sql, values)
     
 '''

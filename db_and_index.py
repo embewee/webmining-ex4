@@ -6,7 +6,7 @@ Main function of the program
 import os
 import libGeneral
 import sqlite3
-import bayes_classifier
+#import bayes_classifier
 
 ######################
 DATABASE_NAME = "ex4.db"
@@ -42,11 +42,18 @@ def createGlobalIndex(connection):
 	libGeneral.writeDictionaryToDisk(globalIndex, "globalIndex")
 		
 ##########################
-# Connect to Database #
 #libGeneral.createSQLiteDB(DATABASE_NAME)
+#print "Created database."
+
 connection = sqlite3.connect(DATABASE_NAME)
+print "Connected to database."
 #######################
 
 #readAllFilesToDB(connection)
+#print "Read all files to database."
+
 #createGlobalIndex(connection)
-bayes_classifier.calculateModel(True)
+#print "Created global index."
+
+#bayes_classifier.calculateModel(True)
+#print "Calculated bayes model"
