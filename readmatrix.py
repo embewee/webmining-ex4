@@ -1,5 +1,12 @@
 import codecs
 
+'''
+INPUT: Dateiname der Datei mit den Matrix-Daten. 
+		Form: 	x1;x2;x3
+				y1;y2;y3
+				...
+OUTPU: MATRIX[][]
+'''
 def readMatrix(filename):
 	matrix = []
 	inputFile = codecs.open(filename, 'r')
