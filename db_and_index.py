@@ -32,8 +32,13 @@ def readAllFilesToDB(connection):
 	
 	for className in trainingFiles:
 		fileList = trainingFiles[className]
+		forTesting = 0
 		for fileName in fileList:
-			libGeneral.readFileToDB(fileName, TRAIN_PATH + "/" + className + "/", connection, className)
+			if forTesting == 0:
+				forTesting = 1
+			else:
+				forTesting = 0
+			libGeneral.readFileToDB(fileName, TRAIN_PATH + "/" + className + "/", connection, className, forTesting)
 			
 	connection.commit()
 
@@ -42,18 +47,18 @@ def createGlobalIndex(connection):
 	libGeneral.writeDictionaryToDisk(globalIndex, "globalIndex")
 		
 ##########################
-#libGeneral.createSQLiteDB(DATABASE_NAME)
-#print "Created database."
+libGeneral.createSQLiteDB(DATABASE_NAME)
+print "Created database."
 
 connection = sqlite3.connect(DATABASE_NAME)
 print "Connected to database."
 #######################
 
-#readAllFilesToDB(connection)
-#print "Read all files to database."
+readAllFilesToDB(connection)
+print "Read all files to database."
 
-#createGlobalIndex(connection)
-#print "Created global index."
+createGlobalIndex(connection)
+print "Created global index."
 
 #bayes_classifier.calculateModel(True)
 #print "Calculated bayes model"

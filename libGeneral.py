@@ -56,7 +56,8 @@ def createSQLiteDB(db):
            ID                INTEGER PRIMARY KEY AUTOINCREMENT,
            WORD_VECTOR       TEXT,
            CLASS             TEXT    NOT NULL,
-           FILENAME          TEXT
+           FILENAME          TEXT,
+           FOR_TESTING       INTEGER
            );''')
     db_connection.close()
     
@@ -176,7 +177,7 @@ def createWordVector(absFilename):
 '''
 Reads a given html file to the DB
 '''
-def readFileToDB(filename, path, connection, docClass):
+def readFileToDB(filename, path, connection, docClass, forTesting):
     
     cursor = connection.cursor()
     
@@ -193,8 +194,8 @@ def readFileToDB(filename, path, connection, docClass):
 
     # Write data to database
     serializedDictionary = makeStringFromDictionary(wordVector)
-    values = (serializedDictionary, docClass, filename)
-    sql = "INSERT INTO TRAINING (WORD_VECTOR, CLASS, FILENAME) VALUES (?,?,?);"
+    values = (serializedDictionary, docClass, filename, forTesting)
+    sql = "INSERT INTO TRAINING (WORD_VECTOR, CLASS, FILENAME, FOR_TESTING) VALUES (?,?,?,?);"
     cursor.execute(sql, values)
     
 '''

@@ -5,6 +5,9 @@ import libGeneral
 PARTITIONING_PATH = "u4_eval/"
 ############################################
 
+'''
+Partitioniert Dateien physikalisch
+'''
 dirs = os.listdir(PARTITIONING_PATH)
 for subdir in dirs:
 	files = os.listdir(PARTITIONING_PATH + subdir)
