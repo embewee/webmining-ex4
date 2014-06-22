@@ -10,7 +10,7 @@ connection = sqlite3.connect(DATABASE_NAME)
 
 def classify(classifyVector,n):
     cursor = connection.cursor()
-    sql = "SELECT ID, WORD_VECTOR, CLASS, FOR_TESTING FROM TRAINING;"
+    sql = "SELECT ID, WORD_VECTOR, CLASS FROM TRAINING WHERE FOR_TESTING = 0;"
     resultDictionary = {}
     id_class_dictionary = {}
     kNNDictionary = {}
@@ -20,11 +20,7 @@ def classify(classifyVector,n):
         id = row[0]
         databaseVector = libGeneral.makeDictionaryFromString(row[1])
         classname = row[2]
-        forTesting = row[3]
-        
-        if forTesting == 1:
-            continue
-        
+     
         id_class_dictionary[id] = classname
         
         databaseVector = libGeneral.normalizeDictionary(databaseVector)
@@ -54,7 +50,14 @@ def classify(classifyVector,n):
             kNNDictionary[classname] = 1
         else:
             kNNDictionary[classname] += 1
-            
+    
+    '''
+    aprioriDictionary = libGeneral.calculateAPrioriDictionary(connection)
+    for key in kNNDictionary.keys():
+        apriori = aprioriDictionary[key]
+        kNNDictionary[key] = kNNDictionary[key] * apriori
+    '''
+         
     maxValue = libGeneral.getMaxValueFromDictionary(kNNDictionary)
     maxKey = libGeneral.getKeyFromMaxValueFromDictionary(kNNDictionary)
     
