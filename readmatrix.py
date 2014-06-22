@@ -30,6 +30,3 @@ def readMatrix(filename):
 def printMatrix(matrix):
 	for row in matrix:
 		print row
-
-matrix = readMatrix("KONFUSIONSMATRIX.DATA")
-printMatrix(matrix)
