@@ -18,27 +18,27 @@ def classify(classifyVector,n):
     cursor.execute(sql)
     for row in cursor.fetchall():
         id = row[0]
-        trainingVector = libGeneral.makeDictionaryFromString(row[1])
+        databaseVector = libGeneral.makeDictionaryFromString(row[1])
         classname = row[2]
         
         id_class_dictionary[id] = classname
         
-        trainingVector = libGeneral.normalizeDictionary(trainingVector)
+        databaseVector = libGeneral.normalizeDictionary(databaseVector)
         classifyVector = libGeneral.normalizeDictionary(classifyVector)
         
         sum = 0.0
         
-        for key in trainingVector.keys():
+        for key in databaseVector.keys():
             if key in classifyVector.keys():
                 classifyValue = classifyVector[key]
-                trainingValue = trainingVector[key]
+                trainingValue = databaseVector[key]
                 
                 sum += math.fabs(classifyValue - trainingValue)
             else:
-                sum += trainingVector[key]
+                sum += databaseVector[key]
                 
         for key in classifyVector.keys():
-            if key not in trainingVector.keys():
+            if key not in databaseVector.keys():
                 sum += classifyVector[key]
                 
         resultDictionary[id] = sum
