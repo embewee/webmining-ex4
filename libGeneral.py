@@ -134,6 +134,21 @@ def getHighestValues(localDictionary, n):
         x += 1
     return outputDictionary
 
+def getLowestValues(localDictionary, n):
+    outputDictionary = {}
+    sorted_keywords = sorted(localDictionary.iteritems(), key=operator.itemgetter(1), reverse=False)
+    
+    dicLen = len(sorted_keywords)
+    if n > dicLen:
+        n = dicLen
+    
+    x = 0
+    while x < n:
+        key = sorted_keywords[x]
+        outputDictionary[key[0]] = localDictionary[key[0]]
+        x += 1
+    return outputDictionary
+
 def createWordVector(absFilename):
     inputFile = codecs.open(absFilename, "r", "utf-8")
     inputString = inputFile.read()
@@ -162,43 +177,16 @@ def readFileToDB(filename, path, connection, docClass):
     filename = unicode(filename)
     absFilename = path + filename
     
-    wordList = createWordVector(absFilename)
+    wordVector = createWordVector(absFilename)
     
     # If the word list is empty
     # Dont write list to Database
-    if len(wordList) == 0:
-        print "EMPTY: " + path + filename
+    if len(wordVector.keys()) == 0:
+        print "ERROR reading file : " + absFilename
         return
-    
-    # Count the occurences of the words
-    # Per document -> localDictionary
-    # Per all documents -> globalDictionary
-    localDictionary = {}
-    x = 0
-    while x < len(wordList):
-        word = wordList[x]
-        
-        # write data to local localDictionary
-        if not word in localDictionary.keys():
-            localDictionary[word] = 1.0
-        else:
-            localDictionary[word] += 1.0
-        
-        '''
-        # write data to global localDictionary
-        if not word in globalDictionary.keys():
-            globalDictionary[word] = 1.0
-        else:
-            globalDictionary[word] += 1.0
-        '''
-        
-        x += 1
-        
-    # Normalize localDictionary
-    #localDictionary = libGeneral.normalizeDictionary(localDictionary)
-    
+
     # Write data to database
-    serializedDictionary = makeStringFromDictionary(localDictionary)
+    serializedDictionary = makeStringFromDictionary(wordVector)
     values = (serializedDictionary, docClass)
     sql = "INSERT INTO TRAINING (WORD_VECTOR, CLASS) VALUES (?,?);"
     cursor.execute(sql, values)
@@ -206,17 +194,17 @@ def readFileToDB(filename, path, connection, docClass):
 '''
 Calculate the global dictionary from all files in DB
 '''
-def calculateIDFVector(DATABASE_NAME, docClass):
-    connection = sqlite3.connect(DATABASE_NAME)
+def calculateIDFVector(connection, docClass):
+    
     values = [docClass,]
-    sql = "SELECT * FROM TRAINING WHERE CLASS = ?;"
+    sql = "SELECT WORD_VECTOR FROM TRAINING WHERE CLASS = ?;"
     selectCursor = connection.execute(sql, values)
     idfVector = {}
     rows = selectCursor.fetchall()
         
     for row in rows:
         #url = row[0]
-        serializedDictionary = row[1]
+        serializedDictionary = row[0]
         #docClass = row[3]
         #idD = row[4]
 
@@ -313,54 +301,6 @@ def readDictionaryFromDisk(fileName):
 	inputFile = codecs.open(fileName, 'r', encoding="utf-8")
 	string = inputFile.read()
 	return makeDictionaryFromString(string)
-
-'''
-Creates a file with sparse representation for two classes in a database
-'''
-def createSparseRepresentationFile(connection, globalDictionary, filename):
-    
-    outputFile = codecs.open(filename, 'w', encoding="utf-8")
-    
-    sql = "SELECT * FROM TRAINING WHERE 1;"
-    selectCursor = connection.execute(sql)
-    rows = selectCursor.fetchall()
-    
-    outputString = u""
-    
-    for row in rows:
-        
-        localDictionary = {}  
-        tf_idf_string = row[2]
-        docClass = row[3]
-        idD = row[4]
-        docString = u""
-        outputString = u""
-
-        print idD
-        
-        if docClass == "course":
-            docString = u"1"
-        if docClass == "non-course":
-            docString = u"-1"
-            
-        outputString = outputString + docString
-        
-        tf_idf_dictionary = {}
-        tf_idf_dictionary = makeDictionaryFromString(tf_idf_string)
-        
-        if len(tf_idf_string) == 0:
-            continue
-        
-        for key in tf_idf_dictionary:
-            if key in globalDictionary.keys():
-                index = globalDictionary[key]
-                localDictionary[index] = tf_idf_dictionary[key]
-                
-        for key in sorted(localDictionary):
-            outputString = outputString + u" " + unicode(key) + u":" + unicode(localDictionary[key])
-        
-        outputString = outputString + u"\n"
-        outputFile.write(outputString)
         
 '''
 Updates the database by filtering the n most common words
@@ -432,3 +372,40 @@ def makeDictionaryFromList(wordList):
             dictionary[word] += 1.0
             
     return dictionary
+
+def determineClasses(connection):
+    classes = []
+    cursor = connection.cursor()
+    sql = "SELECT DISTINCT CLASS FROM TRAINING;"
+    cursor.execute(sql)
+    for row in cursor.fetchall():
+        className = row[0]
+        classes.append(className)
+        
+    return classes
+
+def calculateTfIdfVector(dictionary, connection, className):
+    
+    idf_vector = calculateIDFVector(connection, className)
+    
+    maximumValue = getMaxValueFromDictionary(dictionary)
+            
+    tf_idf_dictionary = {}
+    for key in dictionary:
+        tf_idf_dictionary[key] = float(dictionary[key]/maximumValue) * float(idf_vector[key])
+        
+    return tf_idf_dictionary
+
+def calculateAPrioriDictionary(connection):
+    cursor = connection.cursor()
+    sql = "SELECT CLASS, COUNT(CLASS) FROM TRAINING GROUP BY CLASS;"
+    cursor.execute(sql)
+    aPrioriDict = {}
+    for row in cursor.fetchall():
+        className = row[0]
+        freq = row[1]
+        
+        aPrioriDict[className] = freq
+    
+    aPrioriDict = normalizeDictionary(aPrioriDict)
+    return aPrioriDict

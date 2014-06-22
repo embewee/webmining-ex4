@@ -6,10 +6,15 @@ Main function of the program
 import os
 import libGeneral
 import sqlite3
+import bayes_classifier
 
 ######################
 DATABASE_NAME = "ex4.db"
 TRAIN_PATH = "u4_train/"
+TEST_PATH = "u4_test/"
+GLOBAL_INDEX = "globalIndex";
+RELPROB_PATH = "bayes_model/";
+######################
 
 '''
 Gibt ein Dictionary Verzeichnis -> Dateiliste zurueck vom uebergebenen Pfad zurueck
@@ -31,50 +36,17 @@ def readAllFilesToDB(connection):
 			libGeneral.readFileToDB(fileName, TRAIN_PATH + "/" + className + "/", connection, className)
 			
 	connection.commit()
-		
-##########################
-### Reading data done! ###
-##########################
+
 def createGlobalIndex(connection):
 	globalIndex = libGeneral.createGlobalIndexDictionary(connection)
 	libGeneral.writeDictionaryToDisk(globalIndex, "globalIndex")
-
-########################################
-### Calculating relative probability ###
-########################################
-def calculateRelativeProbability(connection):
-	cursor = connection.cursor()
-	sql = "SELECT DISTINCT CLASS FROM TRAINING;"
-	cursor.execute(sql)
-	for row in cursor.fetchall():
-		classname = row[0]
-		cursor2 = connection.cursor()
-		sql = "SELECT WORD_VECTOR FROM TRAINING WHERE CLASS = ?;"
-		values = [classname,]
-		cursor2.execute(sql, values)
-		
-		classDictionary = {}
-		
-		for row in cursor2.fetchall():
-			currentWordVector = row[0]
-			currentWordVector = libGeneral.makeDictionaryFromString(currentWordVector)
-			
-			for key in currentWordVector:
-				if key not in classDictionary.keys():
-					classDictionary[key] = currentWordVector[key]
-				else:
-					classDictionary[key] += currentWordVector[key]		
-		
-		classDictionary = libGeneral.normalizeDictionary(classDictionary)
-			
-		libGeneral.writeDictionaryToDisk(classDictionary, "bayes_model/" + classname)
 		
 ##########################
 # Connect to Database #
-libGeneral.createSQLiteDB(DATABASE_NAME)
+#libGeneral.createSQLiteDB(DATABASE_NAME)
 connection = sqlite3.connect(DATABASE_NAME)
 #######################
 
-readAllFilesToDB(connection)
-createGlobalIndex(connection)
-calculateRelativeProbability(connection)
+#readAllFilesToDB(connection)
+#createGlobalIndex(connection)
+bayes_classifier.calculateModel(True)
